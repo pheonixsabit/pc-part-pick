@@ -12,6 +12,7 @@ export interface SelectedPart {
   hasIgpu?: boolean | null;
   imageUrl?: string | null;
   url?: string | null;
+  inStock?: boolean;
 }
 
 export type BuildSlots = {

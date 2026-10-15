@@ -17,6 +17,7 @@ import {
   Check,
 } from 'lucide-react';
 import { formatBDT, getRetailerMeta } from '@/lib/utils';
+import ComponentImage from '@/components/ComponentImage';
 
 interface RetailerPriceItem {
   id: string;
@@ -241,15 +242,12 @@ function SearchContent() {
                 {/* Left: Thumbnail & Master Info */}
                 <div className="flex items-start gap-4 min-w-[280px]">
                   <div className="w-16 h-16 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center">
-                    {prod.imageUrl ? (
-                      <img
-                        src={prod.imageUrl}
-                        alt={prod.name}
-                        className="w-full h-full object-contain p-1"
-                      />
-                    ) : (
-                      <Cpu className="w-7 h-7 text-slate-400" />
-                    )}
+                    <ComponentImage
+                      src={prod.imageUrl}
+                      alt={prod.name}
+                      category={prod.category}
+                      className="w-full h-full object-contain p-1"
+                    />
                   </div>
 
                   <div className="space-y-1">
@@ -283,7 +281,7 @@ function SearchContent() {
                     return (
                       <div
                         key={rp.id}
-                        className={`p-3 rounded-xl border flex flex-col justify-between gap-2 min-w-[140px] ${
+                        className={`p-3 rounded-xl border flex flex-col justify-between gap-2 min-w-[145px] ${
                           isLowest
                             ? 'border-cyan-500 bg-cyan-50/40 ring-1 ring-cyan-500/20'
                             : 'border-slate-200 bg-slate-50/50'
@@ -309,6 +307,17 @@ function SearchContent() {
                               {formatBDT(rp.regularPrice)}
                             </div>
                           )}
+                          <div className="pt-1">
+                            {rp.inStock ? (
+                              <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 inline-flex items-center gap-0.5">
+                                <Check className="w-2.5 h-2.5 stroke-[3]" /> In Stock
+                              </span>
+                            ) : (
+                              <span className="text-[10px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">
+                                Out of Stock
+                              </span>
+                            )}
+                          </div>
                         </div>
 
                         <a

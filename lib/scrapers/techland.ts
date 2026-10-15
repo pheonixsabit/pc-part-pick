@@ -32,7 +32,7 @@ export async function scrapeTechlandUrl(url: string, category: ComponentCategory
     $('.v2-card-title').each((_, titleEl) => {
       const $title = $(titleEl);
       const name = $title.text().trim();
-      const $card = $title.closest('div.bg-white, div.group, div.relative');
+      const $card = $title.closest('.v2-card-lift, .product-thumb, div.bg-white, div.group');
 
       // Find link
       let productUrl = $title.parent('a').attr('href') || $card.find('a[href*="techlandbd.com/"]').attr('href') || '';
@@ -40,8 +40,30 @@ export async function scrapeTechlandUrl(url: string, category: ComponentCategory
         productUrl = `https://www.techlandbd.com${productUrl}`;
       }
 
-      // Find image
-      const imageUrl = $card.find('img').attr('src') || '';
+      // Find image with fallback across attributes
+      let $img = $card.find('img').first();
+      if ($img.length === 0) {
+        $img = $title.closest('div.border').find('img').first();
+      }
+      let imageUrl =
+        $img.attr('data-src') ||
+        $img.attr('src') ||
+        $img.attr('data-original') ||
+        '';
+
+      if (!imageUrl && $img.attr('srcset')) {
+        const srcset = $img.attr('srcset') || '';
+        imageUrl = srcset.split(',')[0].trim().split(' ')[0];
+      }
+
+      if (imageUrl.startsWith('//')) {
+        imageUrl = `https:${imageUrl}`;
+      } else if (imageUrl.startsWith('/') && !imageUrl.startsWith('//')) {
+        imageUrl = `https://www.techlandbd.com${imageUrl}`;
+      }
+      if (imageUrl.startsWith('data:')) {
+        imageUrl = '';
+      }
 
       // Find prices
       const priceText = $card.find('.text-red-600, .bengali-text').first().text();
@@ -57,7 +79,22 @@ export async function scrapeTechlandUrl(url: string, category: ComponentCategory
         if (text) rawSpecs.push(text);
       });
 
-      const inStock = price > 0 && !$card.text().toLowerCase().includes('out of stock');
+      // Strict stock validation
+      const cardText = $card.text().toLowerCase();
+      const hasAddToCart =
+        $card.find('[wire\\:click*="addedToCart"], button').filter((_, b) => {
+          const t = $(b).text().toLowerCase();
+          return t.includes('add to cart') || t.includes('buy');
+        }).length > 0;
+
+      const isOutFlagged =
+        cardText.includes('out of stock') ||
+        cardText.includes('stock out') ||
+        cardText.includes('upcoming') ||
+        cardText.includes('pre order') ||
+        cardText.includes('call for price');
+
+      const inStock = !isOutFlagged && hasAddToCart && price > 0;
 
       if (name && price > 0 && productUrl) {
         const enriched = enrichComponentSpecs({

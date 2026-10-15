@@ -11,7 +11,9 @@ import {
   ShoppingBag,
   ArrowRight,
   Share2,
+  Check,
 } from 'lucide-react';
+import ComponentImage from '@/components/ComponentImage';
 
 interface Props {
   params: {
@@ -105,11 +107,12 @@ export default async function SharedBuildPage({ params }: Props) {
             <div key={label} className="p-4 sm:p-5 flex items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center">
-                  {part.imageUrl ? (
-                    <img src={part.imageUrl} alt={part.name} className="w-full h-full object-contain p-1" />
-                  ) : (
-                    <Wrench className="w-5 h-5 text-slate-400" />
-                  )}
+                  <ComponentImage
+                    src={part.imageUrl}
+                    alt={part.name}
+                    category={part.category}
+                    className="w-full h-full object-contain p-1"
+                  />
                 </div>
                 <div>
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
@@ -122,9 +125,14 @@ export default async function SharedBuildPage({ params }: Props) {
               </div>
 
               <div className="flex items-center gap-4">
-                <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${meta.badgeBg}`}>
-                  {meta.name}
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${meta.badgeBg}`}>
+                    {meta.name}
+                  </span>
+                  <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 inline-flex items-center gap-0.5">
+                    <Check className="w-2.5 h-2.5 stroke-[3]" /> In Stock
+                  </span>
+                </div>
                 <div className="font-bold text-slate-900 text-sm sm:text-base">
                   {formatBDT(part.price)}
                 </div>

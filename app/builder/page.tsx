@@ -20,9 +20,11 @@ import {
   X,
   Sparkles,
   ShoppingBag,
+  ShieldCheck,
 } from 'lucide-react';
 import { formatBDT, getRetailerMeta } from '@/lib/utils';
 import { SelectedPart, BuildSlots, CompatibilityReport } from '@/lib/pc-builder/compatibility-checker';
+import ComponentImage from '@/components/ComponentImage';
 
 const SLOT_DEFINITIONS: { key: keyof BuildSlots; label: string; category: string }[] = [
   { key: 'cpu', label: 'Processor (CPU)', category: 'CPU' },
@@ -75,6 +77,43 @@ function BuilderContent() {
   // Share / Copy State
   const [copied, setCopied] = useState<boolean>(false);
   const [shareUrl, setShareUrl] = useState<string>('');
+
+  // Live Stock Verification State
+  const [verifyingStock, setVerifyingStock] = useState<boolean>(false);
+  const [stockVerificationMsg, setStockVerificationMsg] = useState<{
+    status: 'success' | 'warning' | 'idle';
+    text: string;
+  } | null>(null);
+
+  const handleVerifyLiveStock = async () => {
+    setVerifyingStock(true);
+    setStockVerificationMsg(null);
+    try {
+      const res = await fetch('/api/pc-builder/verify-stock', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slots }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        if (data.allInStock) {
+          setStockVerificationMsg({
+            status: 'success',
+            text: 'All selected components verified 100% IN STOCK at their respective stores!',
+          });
+        } else {
+          setStockVerificationMsg({
+            status: 'warning',
+            text: 'One or more items may have low or unconfirmed live inventory. Check retailer links before purchase.',
+          });
+        }
+      }
+    } catch (e) {
+      console.error('Stock verification error:', e);
+    } finally {
+      setVerifyingStock(false);
+    }
+  };
 
   const fetchOptimizedBuild = useCallback(async (b: number, p: string, mon: boolean) => {
     setLoading(true);
@@ -262,6 +301,14 @@ function BuilderContent() {
 
           <div className="flex flex-wrap items-center gap-2">
             <button
+              onClick={handleVerifyLiveStock}
+              disabled={verifyingStock}
+              className="px-3.5 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 font-semibold text-xs flex items-center gap-1.5 transition-colors disabled:opacity-50"
+            >
+              <ShieldCheck className={`w-3.5 h-3.5 ${verifyingStock ? 'animate-spin' : 'text-emerald-600'}`} />
+              {verifyingStock ? 'Checking Live Stock...' : 'Verify Live Stock'}
+            </button>
+            <button
               onClick={handleCopySpecs}
               className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium text-xs flex items-center gap-1.5 transition-colors"
             >
@@ -284,6 +331,23 @@ function BuilderContent() {
             </button>
           </div>
         </div>
+
+        {stockVerificationMsg && (
+          <div
+            className={`p-3.5 rounded-xl border flex items-center gap-2 text-xs font-medium animate-in fade-in ${
+              stockVerificationMsg.status === 'success'
+                ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                : 'bg-amber-50 border-amber-200 text-amber-800'
+            }`}
+          >
+            {stockVerificationMsg.status === 'success' ? (
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            ) : (
+              <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+            )}
+            <span>{stockVerificationMsg.text}</span>
+          </div>
+        )}
 
         {/* Budget Config Form */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pt-4 border-t border-slate-100">
@@ -458,15 +522,12 @@ function BuilderContent() {
                 {/* Slot Label & Info */}
                 <div className="flex items-center gap-4 min-w-[260px]">
                   <div className="w-14 h-14 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center shrink-0">
-                    {part?.imageUrl ? (
-                      <img
-                        src={part.imageUrl}
-                        alt={part.name}
-                        className="w-full h-full object-contain p-1"
-                      />
-                    ) : (
-                      <Wrench className="w-6 h-6 text-slate-400" />
-                    )}
+                    <ComponentImage
+                      src={part?.imageUrl}
+                      alt={part?.name || label}
+                      category={category}
+                      className="w-full h-full object-contain p-1"
+                    />
                   </div>
 
                   <div className="space-y-0.5">
@@ -499,9 +560,16 @@ function BuilderContent() {
                 <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto">
                   {part && meta ? (
                     <div className="flex items-center gap-3">
-                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md border ${meta.badgeBg}`}>
-                        {meta.name}
-                      </span>
+                      <div className="flex flex-col items-end gap-1">
+                        <div className="flex items-center gap-1.5">
+                          <span className={`text-[11px] font-bold px-2 py-0.5 rounded-md border ${meta.badgeBg}`}>
+                            {meta.name}
+                          </span>
+                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">
+                            <Check className="w-2.5 h-2.5 stroke-[3]" /> In Stock
+                          </span>
+                        </div>
+                      </div>
                       <div className="text-right">
                         <div className="font-bold text-slate-900 text-base">{formatBDT(part.price)}</div>
                       </div>
@@ -642,15 +710,12 @@ function BuilderContent() {
                     >
                       <div className="flex items-center gap-3.5 min-w-0">
                         <div className="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center">
-                          {alt.imageUrl ? (
-                            <img
-                              src={alt.imageUrl}
-                              alt={alt.name}
-                              className="w-full h-full object-contain p-1"
-                            />
-                          ) : (
-                            <Wrench className="w-5 h-5 text-slate-400" />
-                          )}
+                          <ComponentImage
+                            src={alt.imageUrl}
+                            alt={alt.name}
+                            category={swapCategory}
+                            className="w-full h-full object-contain p-1"
+                          />
                         </div>
                         <div className="min-w-0">
                           <div className="font-semibold text-slate-900 text-xs sm:text-sm truncate max-w-sm">
@@ -659,6 +724,9 @@ function BuilderContent() {
                           <div className="flex items-center gap-2 pt-0.5 text-[11px] text-slate-500">
                             <span className={`px-1.5 py-0.2 rounded font-medium border text-[10px] ${meta.badgeBg}`}>
                               {meta.name}
+                            </span>
+                            <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1 py-0.2 rounded border border-emerald-200">
+                              In Stock
                             </span>
                             {alt.socket && <span>Socket: {alt.socket}</span>}
                             {alt.ramType && <span>• {alt.ramType}</span>}

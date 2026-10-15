@@ -34,9 +34,31 @@ export async function scrapeRyansCategory(category: ComponentCategory, page: num
       const $el = $(el);
       const name = $el.find('.product-title, .card-title, h2, h3').first().text().trim();
       const productUrl = $el.find('a[href*="/product/"], a[href*="/detail/"]').first().attr('href') || '';
-      const imageUrl = $el.find('img').first().attr('src') || '';
+      
+      const $img = $el.find('img').first();
+      let imageUrl =
+        $img.attr('data-src') ||
+        $img.attr('src') ||
+        $img.attr('data-original') ||
+        '';
+      if (imageUrl.startsWith('//')) {
+        imageUrl = `https:${imageUrl}`;
+      } else if (imageUrl.startsWith('/') && !imageUrl.startsWith('//')) {
+        imageUrl = `https://www.ryans.com${imageUrl}`;
+      }
+      if (imageUrl.startsWith('data:')) {
+        imageUrl = '';
+      }
+
       const priceText = $el.find('.pr-text, .price, .special-price').first().text();
       const price = parseBDT(priceText);
+
+      const cardText = $el.text().toLowerCase();
+      const inStock =
+        !cardText.includes('out of stock') &&
+        !cardText.includes('stock out') &&
+        !cardText.includes('upcoming') &&
+        price > 0;
 
       if (name && price > 0 && productUrl) {
         items.push(
@@ -47,7 +69,7 @@ export async function scrapeRyansCategory(category: ComponentCategory, page: num
             price,
             url: productUrl.startsWith('http') ? productUrl : `https://www.ryans.com${productUrl}`,
             imageUrl,
-            inStock: true,
+            inStock,
           })
         );
       }

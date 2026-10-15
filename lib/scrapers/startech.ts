@@ -37,7 +37,20 @@ export async function scrapeStarTechUrl(url: string, category: ComponentCategory
       const $el = $(el);
       const name = $el.find('.p-item-name a').text().trim();
       const productUrl = $el.find('.p-item-name a').attr('href') || '';
-      const imageUrl = $el.find('.p-item-img img').attr('src') || '';
+      const $img = $el.find('.p-item-img img');
+      let imageUrl =
+        $img.attr('data-src') ||
+        $img.attr('src') ||
+        $img.attr('data-original') ||
+        '';
+      if (imageUrl.startsWith('//')) {
+        imageUrl = `https:${imageUrl}`;
+      } else if (imageUrl.startsWith('/') && !imageUrl.startsWith('//')) {
+        imageUrl = `https://www.startech.com.bd${imageUrl}`;
+      }
+      if (imageUrl.startsWith('data:')) {
+        imageUrl = '';
+      }
 
       const priceContainer = $el.find('.p-item-price');
       const newPriceEl = priceContainer.find('.price-new');
@@ -55,10 +68,23 @@ export async function scrapeStarTechUrl(url: string, category: ComponentCategory
         price = parseBDT(priceContainer.text());
       }
 
-      // Check stock
+      // Strict stock validation
       const stockBadge = $el.find('.stock-status, .tag-stock').text().toLowerCase();
       const priceText = priceContainer.text().toLowerCase();
-      const inStock = !stockBadge.includes('out') && !priceText.includes('tba') && price > 0;
+      const actionsText = $el.find('.actions').text().toLowerCase();
+      const hasBuyButton = $el.find('.btn-add-cart, [onclick*="cart.add"]').length > 0;
+
+      const isOutFlagged =
+        stockBadge.includes('out') ||
+        stockBadge.includes('coming') ||
+        stockBadge.includes('pre') ||
+        priceText.includes('out of stock') ||
+        priceText.includes('up coming') ||
+        priceText.includes('tba') ||
+        actionsText.includes('out of stock') ||
+        actionsText.includes('up coming');
+
+      const inStock = !isOutFlagged && hasBuyButton && price > 0;
 
       // Extract bullet specs
       const rawSpecs: string[] = [];

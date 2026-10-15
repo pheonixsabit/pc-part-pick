@@ -47,9 +47,10 @@ async function getAvailableProductsByCategory(category: string): Promise<Enriche
   });
 
   return products
-    .filter((p) => p.prices.length > 0)
+    .filter((p) => p.prices.length > 0 && p.prices.some((pr) => pr.inStock && pr.price > 0))
     .map((p) => {
-      const best = p.prices[0];
+      const inStockPrices = p.prices.filter((pr) => pr.inStock && pr.price > 0);
+      const best = inStockPrices[0] || p.prices[0];
       return {
         id: p.id,
         name: p.name,
@@ -110,6 +111,7 @@ function findBestFit(
     hasIgpu: best.hasIgpu,
     imageUrl: best.imageUrl,
     url: best.storeUrl,
+    inStock: true,
   };
 }
 
