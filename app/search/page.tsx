@@ -113,7 +113,7 @@ function SearchContent() {
             PC Parts Search & Price Comparison Engine
           </h1>
           <p className="text-xs text-slate-500 mt-1">
-            Search any PC component and compare real-time prices across Star Tech, Tech Land, and Ryans Computers.
+            Search any PC component and compare real-time prices across Star Tech, UCC BD, and Ryans Computers.
           </p>
         </div>
 
@@ -167,7 +167,7 @@ function SearchContent() {
               >
                 <option value="ALL">All Stores</option>
                 <option value="STAR_TECH">Star Tech</option>
-                <option value="TECHLAND">Tech Land</option>
+                <option value="UCC_BD">UCC BD</option>
                 <option value="RYANS">Ryans</option>
               </select>
             </div>

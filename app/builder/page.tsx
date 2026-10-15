@@ -295,7 +295,7 @@ function BuilderContent() {
               Interactive Budget PC Builder
             </h1>
             <p className="text-xs text-slate-500 mt-1">
-              Prices dynamically scanned across Star Tech, Tech Land, and Ryans Computers.
+              Prices dynamically scanned across Star Tech, UCC BD, and Ryans Computers.
             </p>
           </div>
 

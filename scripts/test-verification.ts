@@ -154,6 +154,14 @@ async function runTests() {
   assert(gaming65k.compatibility.isCompatible, 'Generated 65k build must pass compatibility with 0 errors');
   assert(gaming65k.retailerBreakdown.length > 0, 'Must have retailer breakdown stats');
 
+  // TEST 7: Retailer Transition - UCC BD Added & Tech Land Purged
+  console.log('\n--- 7. Testing Retailer Transition (UCC BD vs Tech Land) ---');
+  const techlandCount = await prisma.retailerPrice.count({ where: { retailer: 'TECHLAND' } });
+  assert(techlandCount === 0, 'TECHLAND must have 0 records in database (fully purged)');
+
+  const uccCount = await prisma.retailerPrice.count({ where: { retailer: 'UCC_BD' } });
+  assert(uccCount > 0, `UCC_BD must have active price records in database (found: ${uccCount})`);
+
   console.log(`\n========================================`);
   console.log(`TEST SUMMARY: ${passed} PASSED, ${failed} FAILED`);
   console.log(`========================================\n`);

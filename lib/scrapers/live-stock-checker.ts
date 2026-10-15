@@ -44,18 +44,21 @@ export async function checkUrlLiveStock(url: string, retailer: string): Promise<
       };
     }
 
-    if (retailer === 'TECHLAND') {
-      const pageText = $('body').text().toLowerCase();
-      const hasAddToCart =
-        $('[wire\\:click*="addedToCart"], .btn-cart, #button-cart, button:contains("Add to Cart")').length > 0;
+    if (retailer === 'UCC_BD') {
+      const statsText = $('.product-stats, .stats, .stat-2, .product-options').text().toLowerCase();
+      const bodyText = $('body').text().toLowerCase();
+      const hasAddToCart = $('#button-cart, .btn-cart').length > 0;
       const isOut =
-        pageText.includes('out of stock') ||
-        pageText.includes('stock out') ||
-        pageText.includes('upcoming');
+        statsText.includes('out of stock') ||
+        statsText.includes('call for price') ||
+        statsText.includes('upcoming') ||
+        statsText.includes('pre order') ||
+        bodyText.includes('call for price') ||
+        bodyText.includes('out of stock');
 
-      const priceText = $('.price, .bengali-text, .text-red-600').first().text();
+      const priceText = $('.product-price, .price-new, .price-normal, .price').first().text();
       const price = parseBDT(priceText);
-      const inStock = !isOut && (hasAddToCart || price > 0);
+      const inStock = !isOut && price > 0;
 
       return {
         inStock,

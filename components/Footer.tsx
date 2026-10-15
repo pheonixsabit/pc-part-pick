@@ -21,7 +21,7 @@ export default function Footer() {
             </p>
             <div className="flex items-center gap-2 pt-2">
               <span className="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-md border border-slate-700">Star Tech</span>
-              <span className="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-md border border-slate-700">Tech Land</span>
+              <span className="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-md border border-slate-700">UCC BD</span>
               <span className="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-md border border-slate-700">Ryans Computers</span>
             </div>
           </div>
@@ -64,12 +64,12 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="https://www.techlandbd.com"
+                  href="https://www.ucc.com.bd"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-cyan-400 transition-colors flex items-center gap-1"
                 >
-                  Tech Land BD <ExternalLink className="w-3 h-3" />
+                  UCC BD <ExternalLink className="w-3 h-3" />
                 </a>
               </li>
               <li>

@@ -1,7 +1,7 @@
 import { prisma } from '../prisma';
 import { ComponentCategory, ScrapedItem } from './types';
 import { scrapeStarTechCategory } from './startech';
-import { scrapeTechlandCategory } from './techland';
+import { scrapeUccCategory } from './ucc';
 import { scrapeRyansCategory } from './ryans';
 import { normalizeProductName } from './canonical-matcher';
 
@@ -84,20 +84,20 @@ export async function saveScrapedItems(items: ScrapedItem[]): Promise<number> {
 export async function crawlCategory(category: ComponentCategory): Promise<{
   category: ComponentCategory;
   startechCount: number;
-  techlandCount: number;
+  uccCount: number;
   ryansCount: number;
   totalSaved: number;
 }> {
   console.log(`[Crawler] Starting crawl for category: ${category}...`);
 
-  // Parallel fetch from Star Tech and Techland
-  const [startechItems, techlandItems, ryansItems] = await Promise.all([
+  // Parallel fetch from Star Tech, UCC BD, and Ryans
+  const [startechItems, uccItems, ryansItems] = await Promise.all([
     scrapeStarTechCategory(category, 1).catch((e) => {
       console.error(`StarTech crawl failed for ${category}:`, e.message);
       return [] as ScrapedItem[];
     }),
-    scrapeTechlandCategory(category, 1).catch((e) => {
-      console.error(`Techland crawl failed for ${category}:`, e.message);
+    scrapeUccCategory(category, 1).catch((e) => {
+      console.error(`UCC BD crawl failed for ${category}:`, e.message);
       return [] as ScrapedItem[];
     }),
     scrapeRyansCategory(category, 1).catch((e) => {
@@ -106,17 +106,17 @@ export async function crawlCategory(category: ComponentCategory): Promise<{
     }),
   ]);
 
-  const allItems = [...startechItems, ...techlandItems, ...ryansItems];
+  const allItems = [...startechItems, ...uccItems, ...ryansItems];
   const totalSaved = await saveScrapedItems(allItems);
 
   console.log(
-    `[Crawler] Finished ${category}: StarTech (${startechItems.length}), TechLand (${techlandItems.length}), Ryans (${ryansItems.length}) -> ${totalSaved} saved.`
+    `[Crawler] Finished ${category}: StarTech (${startechItems.length}), UCC BD (${uccItems.length}), Ryans (${ryansItems.length}) -> ${totalSaved} saved.`
   );
 
   return {
     category,
     startechCount: startechItems.length,
-    techlandCount: techlandItems.length,
+    uccCount: uccItems.length,
     ryansCount: ryansItems.length,
     totalSaved,
   };

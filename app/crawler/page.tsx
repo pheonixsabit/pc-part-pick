@@ -18,7 +18,7 @@ interface CatalogStats {
   totalListings: number;
   retailers: {
     starTech: number;
-    techland: number;
+    ucc: number;
     ryans: number;
   };
 }
@@ -65,7 +65,7 @@ export default function CrawlerPage() {
       if (data.success) {
         if (category) {
           addLog(
-            `✓ Successfully crawled ${category}: StarTech (${data.result.startechCount}), TechLand (${data.result.techlandCount}), Ryans (${data.result.ryansCount}) -> ${data.result.totalSaved} saved.`
+            `✓ Successfully crawled ${category}: StarTech (${data.result.startechCount}), UCC BD (${data.result.uccCount}), Ryans (${data.result.ryansCount}) -> ${data.result.totalSaved} saved.`
           );
         } else {
           addLog(`✓ All categories successfully crawled and catalog synchronized!`);
@@ -101,7 +101,7 @@ export default function CrawlerPage() {
           Live Scraper & Catalog Synchronization
         </h1>
         <p className="text-xs text-slate-500">
-          Monitor and execute automated web scrapers across Star Tech, Tech Land, and Ryans Computers.
+          Monitor and execute automated web scrapers across Star Tech, UCC BD, and Ryans Computers.
         </p>
       </div>
 
@@ -131,11 +131,11 @@ export default function CrawlerPage() {
 
         <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-1">
           <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-            <Store className="w-4 h-4 text-blue-600" />
-            Tech Land Listings
+            <Store className="w-4 h-4 text-sky-600" />
+            UCC BD Listings
           </div>
           <div className="text-3xl font-extrabold text-slate-900">
-            {loadingStats ? '...' : stats?.retailers.techland || 0}
+            {loadingStats ? '...' : stats?.retailers.ucc || 0}
           </div>
           <div className="text-[11px] text-emerald-600 font-medium">Direct HTTP Cheerio</div>
         </div>

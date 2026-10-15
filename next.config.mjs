@@ -12,11 +12,11 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'www.techlandbd.com',
+        hostname: 'www.ucc.com.bd',
       },
       {
         protocol: 'https',
-        hostname: 'techlandbd.com',
+        hostname: 'ucc.com.bd',
       },
       {
         protocol: 'https',

@@ -31,7 +31,7 @@ export async function GET() {
     const productCount = await prisma.product.count();
     const priceCount = await prisma.retailerPrice.count();
     const starTechCount = await prisma.retailerPrice.count({ where: { retailer: 'STAR_TECH' } });
-    const techlandCount = await prisma.retailerPrice.count({ where: { retailer: 'TECHLAND' } });
+    const uccCount = await prisma.retailerPrice.count({ where: { retailer: 'UCC_BD' } });
     const ryansCount = await prisma.retailerPrice.count({ where: { retailer: 'RYANS' } });
 
     return NextResponse.json({
@@ -41,7 +41,7 @@ export async function GET() {
         totalListings: priceCount,
         retailers: {
           starTech: starTechCount,
-          techland: techlandCount,
+          ucc: uccCount,
           ryans: ryansCount,
         },
       },

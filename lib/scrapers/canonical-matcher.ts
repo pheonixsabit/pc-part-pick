@@ -2,7 +2,7 @@ import { slugify } from '../utils';
 
 /**
  * Normalizes retailer product titles so that identical components
- * from Star Tech, Tech Land, and Ryans link to the same master product.
+ * from Star Tech, UCC BD, and Ryans link to the same master product.
  */
 export function normalizeProductName(rawName: string): { cleanName: string; canonicalSlug: string } {
   let clean = rawName

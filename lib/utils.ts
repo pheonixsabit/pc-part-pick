@@ -43,13 +43,13 @@ export function getRetailerMeta(retailer: string) {
         logoText: 'Star Tech',
         domain: 'startech.com.bd'
       };
-    case 'TECHLAND':
+    case 'UCC_BD':
       return {
-        name: 'Tech Land',
-        badgeBg: 'bg-blue-50 text-blue-700 border-blue-200',
-        brandColor: '#1c4289',
-        logoText: 'Tech Land',
-        domain: 'techlandbd.com'
+        name: 'UCC BD',
+        badgeBg: 'bg-sky-50 text-sky-700 border-sky-200',
+        brandColor: '#005b94',
+        logoText: 'UCC BD',
+        domain: 'ucc.com.bd'
       };
     case 'RYANS':
       return {

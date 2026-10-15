@@ -20,7 +20,7 @@ export default function Navbar() {
               <span className="font-bold text-lg text-slate-900 tracking-tight">PCPartPicker</span>
               <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300">BD</span>
             </div>
-            <p className="text-[10px] text-slate-500 font-medium">Star Tech • Tech Land • Ryans</p>
+            <p className="text-[10px] text-slate-500 font-medium">Star Tech • UCC BD • Ryans</p>
           </div>
         </Link>
 

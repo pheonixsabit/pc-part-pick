@@ -32,7 +32,7 @@ model RetailerPrice {
   id           String   @id @default(cuid())
   productId    String
   product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  retailer     String   // STAR_TECH, RYANS, TECHLAND
+  retailer     String   // STAR_TECH, RYANS, UCC_BD
   retailerName String
   price        Float
   regularPrice Float?

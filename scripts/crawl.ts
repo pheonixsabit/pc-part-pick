@@ -21,7 +21,7 @@ async function main() {
       console.log(`\n--- Crawling ${cat} ---`);
       const res = await crawlCategory(cat);
       console.log(
-        `✓ ${cat}: StarTech (${res.startechCount}), TechLand (${res.techlandCount}), Ryans (${res.ryansCount}) -> Total Saved: ${res.totalSaved}`
+        `✓ ${cat}: StarTech (${res.startechCount}), UCC BD (${res.uccCount}), Ryans (${res.ryansCount}) -> Total Saved: ${res.totalSaved}`
       );
     } catch (err: unknown) {
       console.error(`✗ Error crawling ${cat}:`, err instanceof Error ? err.message : String(err));

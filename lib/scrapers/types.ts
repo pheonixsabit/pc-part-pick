@@ -1,4 +1,4 @@
-export type RetailerId = 'STAR_TECH' | 'TECHLAND' | 'RYANS';
+export type RetailerId = 'STAR_TECH' | 'UCC_BD' | 'RYANS';
 
 export type ComponentCategory =
   | 'CPU'

@@ -50,7 +50,7 @@ export default function HomePage() {
           <div className="text-center max-w-3xl mx-auto space-y-4">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-100 text-cyan-800 text-xs font-semibold border border-cyan-200">
               <Zap className="w-3.5 h-3.5 text-cyan-600" />
-              Real-time prices from Star Tech • Tech Land • Ryans
+              Real-time prices from Star Tech • UCC BD • Ryans
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 leading-tight">
               Build Your Dream PC in Bangladesh for{' '}
@@ -210,7 +210,7 @@ export default function HomePage() {
             </div>
             <h3 className="font-bold text-slate-900 text-base">Cheapest Cross-Store Prices</h3>
             <p className="text-xs text-slate-600 leading-relaxed">
-              Why buy all parts from one store? We check Star Tech, Tech Land, and Ryans to find which retailer offers the lowest price for each individual part.
+              Why buy all parts from one store? We check Star Tech, UCC BD, and Ryans to find which retailer offers the lowest price for each individual part.
             </p>
           </div>
 
