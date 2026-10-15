@@ -90,21 +90,21 @@ export async function crawlCategory(category: ComponentCategory): Promise<{
 }> {
   console.log(`[Crawler] Starting crawl for category: ${category}...`);
 
-  // Parallel fetch from Star Tech, UCC BD, and Ryans
-  const [startechItems, uccItems, ryansItems] = await Promise.all([
-    scrapeStarTechCategory(category, 1).catch((e) => {
-      console.error(`StarTech crawl failed for ${category}:`, e.message);
-      return [] as ScrapedItem[];
-    }),
-    scrapeUccCategory(category, 1).catch((e) => {
-      console.error(`UCC BD crawl failed for ${category}:`, e.message);
-      return [] as ScrapedItem[];
-    }),
-    scrapeRyansCategory(category, 1).catch((e) => {
-      console.error(`Ryans crawl failed for ${category}:`, e.message);
-      return [] as ScrapedItem[];
-    }),
-  ]);
+  // Sequential fetch across retailers prevents corporate proxy tunnel collisions
+  const startechItems = await scrapeStarTechCategory(category, 1).catch((e) => {
+    console.error(`StarTech crawl failed for ${category}:`, e.message);
+    return [] as ScrapedItem[];
+  });
+
+  const uccItems = await scrapeUccCategory(category, 1).catch((e) => {
+    console.error(`UCC BD crawl failed for ${category}:`, e.message);
+    return [] as ScrapedItem[];
+  });
+
+  const ryansItems = await scrapeRyansCategory(category, 1).catch((e) => {
+    console.error(`Ryans crawl failed for ${category}:`, e.message);
+    return [] as ScrapedItem[];
+  });
 
   const allItems = [...startechItems, ...uccItems, ...ryansItems];
   const totalSaved = await saveScrapedItems(allItems);

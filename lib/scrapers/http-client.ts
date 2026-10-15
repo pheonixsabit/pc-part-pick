@@ -3,25 +3,36 @@ import { spawn } from 'child_process';
 const DEFAULT_USER_AGENT =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36';
 
+const SYSTEM_PROXY =
+  process.env.https_proxy ||
+  process.env.http_proxy ||
+  process.env.HTTPS_PROXY ||
+  process.env.HTTP_PROXY ||
+  '';
+
 /**
- * Executes a fast, asynchronous non-blocking curl process.
- * This completely avoids blocking the Node.js event loop and automatically
- * respects corporate proxies and Windows system configurations.
+ * Executes an asynchronous non-blocking curl process.
+ * Never blocks Node.js event loop and automatically handles proxy/corporate TLS.
  */
-function fetchWithCurl(url: string, timeoutSec: number = 25): Promise<string> {
+function runCurl(url: string, timeoutSec: number = 30): Promise<string> {
   return new Promise((resolve, reject) => {
     const args = [
-      '-s',
+      '-sS',
       '-L',
       '-k',
       '--connect-timeout',
-      '8',
+      '15',
       '--max-time',
       String(timeoutSec),
       '-A',
       DEFAULT_USER_AGENT,
-      url,
     ];
+
+    if (SYSTEM_PROXY) {
+      args.push('--proxy', SYSTEM_PROXY);
+    }
+
+    args.push(url);
 
     const child = spawn('curl.exe', args, { stdio: ['ignore', 'pipe', 'pipe'] });
     let stdout = '';
@@ -43,49 +54,36 @@ function fetchWithCurl(url: string, timeoutSec: number = 25): Promise<string> {
       if (code === 0 && stdout.length > 50) {
         resolve(stdout);
       } else {
-        reject(new Error(`curl exited with code ${code}: ${stderr || 'empty response'}`));
+        reject(
+          new Error(
+            `curl exited with code ${code}: ${stderr.trim() || 'empty response'}`
+          )
+        );
       }
     });
   });
 }
 
 /**
- * Robust non-blocking HTTP client.
- * Uses native async curl by default on Windows/proxy environments for zero event-loop blocking,
- * and falls back to standard fetch if curl is unavailable.
+ * Resilient fetch with automatic single retry on network/proxy glitches.
  */
-export async function fetchHtml(url: string, timeoutMs: number = 25000): Promise<string> {
-  // Try fast non-blocking async curl first
+export async function fetchHtml(url: string, timeoutMs: number = 30000): Promise<string> {
+  const timeoutSec = Math.max(10, Math.round(timeoutMs / 1000));
+
+  // Attempt 1
   try {
-    const html = await fetchWithCurl(url, Math.round(timeoutMs / 1000));
-    if (html && html.length > 100) {
-      return html;
-    }
-  } catch (curlErr: unknown) {
-    // If curl failed, attempt native fetch as fallback
+    const html = await runCurl(url, timeoutSec);
+    return html;
+  } catch (err: unknown) {
+    // Retry once with a brief 250ms breathing gap for proxy socket resets
     try {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 6000);
-
-      const res = await fetch(url, {
-        headers: {
-          'User-Agent': DEFAULT_USER_AGENT,
-          Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-          'Accept-Language': 'en-US,en;q=0.9',
-        },
-        signal: controller.signal,
-      });
-      clearTimeout(timer);
-
-      if (res.ok) {
-        return await res.text();
-      }
-    } catch {
-      // Ignore native fetch fallback error
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      const html = await runCurl(url, timeoutSec);
+      return html;
+    } catch (retryErr: unknown) {
+      const errMsg = retryErr instanceof Error ? retryErr.message : String(retryErr);
+      console.error(`Fetch error for ${url}:`, errMsg);
+      throw new Error(`Failed to fetch HTML from ${url}: ${errMsg}`);
     }
-
-    console.error(`Fetch error for ${url}:`, curlErr instanceof Error ? curlErr.message : String(curlErr));
   }
-
-  throw new Error(`Failed to fetch HTML from ${url}`);
 }
