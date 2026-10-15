@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Partly — Bangladesh's PC parts price search engine." />
+  <link rel="search" type="application/opensearchdescription+xml" title="Partly BD" href="/opensearch.xml" />
+  <title>Partly — Bangladesh PC parts search</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="Partly home"><span class="brand-mark">P</span><span>partly<span class="brand-dot">.</span></span></a>
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a class="active" href="#search">Search</a>
+        <a href="#compare">Compare <span class="nav-count" id="compareCount">0</span></a>
+        <a href="#build">Build a PC</a>
+        <a href="#watchlist">Watchlist</a>
+      </nav>
+      <div class="top-actions"><button class="icon-button" aria-label="Toggle theme" id="themeButton">☼</button><button class="avatar" aria-label="Account">JS</button></div>
+    </header>
+
+    <main id="top">
+      <section class="hero" id="search">
+        <div class="hero-copy"><p class="eyebrow">BANGLADESH PC HARDWARE INDEX</p><h1>Find your next<br /><em>upgrade.</em></h1><p class="hero-subtitle">Search across Bangladesh's best computer stores, compare real prices, and build with confidence.</p></div>
+        <div class="search-card">
+          <div class="search-input-wrap"><span class="search-icon">⌕</span><input id="searchInput" value="RTX 5070" placeholder="Search parts, specs, or builds..." autocomplete="off" /><button class="clear-search" id="clearSearch" aria-label="Clear search">×</button><button class="search-button" id="searchButton">Search</button></div>
+          <div class="search-suggestions"><span>Try searching</span><button data-query="32GB DDR5 6000">32GB DDR5 6000</button><button data-query="7800X3D">7800X3D</button><button data-query="GPU under ৳80k">GPU under ৳80k</button></div>
+        </div>
+        <div class="hero-stat-row"><span><strong>4,280+</strong> products indexed</span><span><i></i> Prices updated today</span><span><strong>18</strong> local retailers</span></div>
+      </section>
+
+      <section class="workspace">
+        <aside class="filters" aria-label="Filters">
+          <div class="filter-heading"><span>FILTERS</span><button id="resetFilters">Reset</button></div>
+          <div class="filter-block"><label class="filter-label">Category</label><div class="category-list" id="categoryList"><button class="category active" data-category="All"><span>◈</span> All parts <b>4280</b></button><button class="category" data-category="GPU"><span>◉</span> Graphics cards <b>842</b></button><button class="category" data-category="CPU"><span>◌</span> Processors <b>316</b></button><button class="category" data-category="RAM"><span>▦</span> Memory <b>509</b></button><button class="category" data-category="SSD"><span>▤</span> Storage <b>628</b></button><button class="category" data-category="Motherboard"><span>▧</span> Motherboards <b>410</b></button><button class="category" data-category="PSU"><span>◫</span> Power supplies <b>286</b></button></div></div>
+          <div class="filter-block"><label class="filter-label">Price range</label><div class="range-values"><span>৳<span id="minPriceLabel">0</span></span><span>৳<span id="maxPriceLabel">200,000+</span></span></div><input type="range" min="0" max="200000" step="5000" value="200000" id="priceRange" /></div>
+          <div class="filter-block"><label class="filter-label">Availability</label><label class="check-row"><input type="checkbox" id="stockOnly" /><span class="checkmark"></span> In stock now <small>1,904</small></label><label class="check-row"><input type="checkbox" id="warrantyOnly" /><span class="checkmark"></span> Official warranty <small>2,816</small></label></div>
+          <div class="filter-note"><span class="note-icon">✦</span><div><strong>Data you can trust</strong><p>Every price is checked against the retailer listing and timestamped.</p></div></div>
+        </aside>
+
+        <section class="results-panel">
+          <div class="results-header"><div><p class="section-kicker">SEARCH RESULTS</p><h2 id="resultsTitle">RTX 5070 <span id="resultCount">· 4 matches</span></h2></div><div class="sort-wrap"><label for="sortSelect">Sort by</label><select id="sortSelect"><option value="relevance">Relevance</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option><option value="rating">Store rating</option></select></div></div>
+          <div class="active-filters" id="activeFilters"><span class="result-chip">Bangladesh <button>×</button></span><span class="result-chip">Updated today <button>×</button></span></div>
+          <div class="product-grid" id="productGrid"></div>
+          <div class="empty-state" id="emptyState" hidden><div>⌕</div><h3>No parts found</h3><p>Try a broader term or clear your filters.</p></div>
+          <button class="load-more" id="loadMore">Load more results <span>↓</span></button>
+        </section>
+      </section>
+
+      <section class="insight-section" id="compare"><div class="section-title-row"><div><p class="section-kicker">MAKE A SMARTER DECISION</p><h2>See the full picture.</h2></div><a href="#compare" class="text-link">Open comparison <span>→</span></a></div><div class="insight-grid"><article class="price-insight"><div class="insight-top"><span class="insight-label">PRICE TREND · RTX 5070</span><span class="trend-badge">↓ 4.0% vs avg</span></div><div class="price-big">৳89,500 <span>current lowest</span></div><div class="chart"><svg viewBox="0 0 600 130" preserveAspectRatio="none" role="img" aria-label="Thirty day price trend"><defs><linearGradient id="chartFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#a7e85d" stop-opacity=".28"/><stop offset="1" stop-color="#a7e85d" stop-opacity="0"/></linearGradient></defs><path d="M0 89 C35 78 38 94 71 80 S113 35 145 53 S179 82 213 67 S260 72 284 58 S319 86 350 68 S399 74 427 43 S463 55 489 32 S534 45 560 17 S586 27 600 8 L600 130 L0 130 Z" fill="url(#chartFill)"/><path d="M0 89 C35 78 38 94 71 80 S113 35 145 53 S179 82 213 67 S260 72 284 58 S319 86 350 68 S399 74 427 43 S463 55 489 32 S534 45 560 17 S586 27 600 8" fill="none" stroke="#a7e85d" stroke-width="3"/></svg><div class="chart-labels"><span>30 days ago</span><span>Today</span></div></div></article><article class="build-card" id="build"><div class="build-icon">⌘</div><div><span class="insight-label">BUILD A PC</span><h3>Tell us what you need.</h3><p>We’ll find compatible parts from local stores that fit your budget.</p><button class="primary-button" id="buildButton">Start a build <span>→</span></button></div></article></div></section>
+    </main>
+    <footer><span>© 2026 partly.</span><span>Built for builders in Bangladesh <b>♥</b></span><span>Prices are indicative and may change at checkout.</span></footer>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>
