@@ -1,0 +1,56 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Product {
+  id              String          @id @default(cuid())
+  name            String
+  slug            String          @unique
+  category        String          // CPU, MOTHERBOARD, RAM, STORAGE, GPU, PSU, CASING, COOLER, MONITOR
+  brand           String?
+  model           String?
+  socket          String?         // AM4, AM5, LGA1700, LGA1851, etc.
+  ramType         String?         // DDR4, DDR5
+  formFactor      String?         // ATX, Micro-ATX, Mini-ITX
+  tdpWatts        Int?            // TDP or Power Consumption
+  recommendedPsu  Int?            // Recommended PSU in Watts (for GPUs)
+  hasIgpu         Boolean         @default(false)
+  specsJson       String?         // Detailed key-value specs
+  imageUrl        String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  prices          RetailerPrice[]
+}
+
+model RetailerPrice {
+  id           String   @id @default(cuid())
+  productId    String
+  product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  retailer     String   // STAR_TECH, RYANS, TECHLAND
+  retailerName String
+  price        Float
+  regularPrice Float?
+  url          String
+  imageUrl     String?
+  inStock      Boolean  @default(true)
+  lastChecked  DateTime @default(now())
+
+  @@unique([productId, retailer])
+}
+
+model SavedBuild {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  title        String
+  purpose      String   // GAMING, EDITING, OFFICE, GENERAL
+  targetBudget Float
+  totalPrice   Float
+  partsJson    String   // JSON string of selected parts
+  createdAt    DateTime @default(now())
+}
