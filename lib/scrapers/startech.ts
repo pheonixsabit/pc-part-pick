@@ -8,7 +8,7 @@ export const STARTECH_CATEGORY_URLS: Record<ComponentCategory, string> = {
   CPU: 'https://www.startech.com.bd/component/processor',
   MOTHERBOARD: 'https://www.startech.com.bd/component/motherboard',
   RAM: 'https://www.startech.com.bd/component/desktop-ram',
-  STORAGE: 'https://www.startech.com.bd/component/ssd-hard-disk',
+  STORAGE: 'https://www.startech.com.bd/ssd',
   GPU: 'https://www.startech.com.bd/component/graphics-card',
   PSU: 'https://www.startech.com.bd/component/power-supply',
   CASING: 'https://www.startech.com.bd/component/casing',
